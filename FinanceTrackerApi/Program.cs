@@ -58,5 +58,5 @@ app.MapGet("/debug/endpoints", (IEnumerable<EndpointDataSource> endpoints) =>
     return Results.Ok(data);
 });
 
-//app.UseExceptionHandler("/error");
+app.UseExceptionHandler("/error");
 app.Run();
