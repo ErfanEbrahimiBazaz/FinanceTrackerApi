@@ -4,7 +4,7 @@ namespace FinanceTrackerApi.Entities
 {
     public class AccountDbContext: DbContext
     {
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Accounts> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public AccountDbContext(DbContextOptions<AccountDbContext> options)
             : base(options)

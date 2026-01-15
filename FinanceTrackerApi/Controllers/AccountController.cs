@@ -1,4 +1,5 @@
-﻿using FinanceTrackerApi.Dto;
+﻿using AutoMapper;
+using FinanceTrackerApi.Dto;
 using FinanceTrackerApi.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,8 @@ namespace FinanceTrackerApi.Controllers
 {
     [ApiController]
     [Route("/api/Account")]
-    public class AccountController(IAccountRepository repository) : ControllerBase
+    public class AccountController(IAccountRepository repository,
+        IMapper mapper) : ControllerBase
     {
         //[HttpGet("AllAccounts")]
         //public ActionResult<List<AccountWithTransactionDto>> GetAllAccountsWithTransactions()
@@ -18,9 +20,11 @@ namespace FinanceTrackerApi.Controllers
 
 
         [HttpGet("AllAccounts")]
-        public ActionResult<List<AccountWithTransactionDto>> GetAllAccountsWithTransactions()
+        public async Task<ActionResult<List<AccountWithTransactionDto>>> GetAllAccountsWithTransactions()
         {
-            throw new NotImplementedException();
+            var accounts = await repository.GetAllAccountsWithTransactionsAsync();
+            var accountsDto = mapper.Map<IEnumerable<AccountWithTransactionDto>>(accounts);
+            return Ok(accountsDto);
         }
 
         //[HttpGet("AllAccountsWitoutTransactions")]
@@ -42,22 +46,36 @@ namespace FinanceTrackerApi.Controllers
         //    return Ok(accountDtos);
         //}
 
-        //[HttpGet("AllAccountsWitoutTransactions")]
-        //public async Task<ActionResult<List<AccountDto>>> GetAllAccountsWithoutTransactions()
+        [HttpGet("AllAccountsWitoutTransactions")]
+        public async Task<ActionResult<List<AccountDto>>> GetAllAccountsWithoutTransactions()
+        {
+            var accounts = await repository.GetAllAccountsWithoutTransactionsAsync();
+            var accountDtos = mapper.Map<IEnumerable<AccountDto>>(accounts);
+            return Ok(accountDtos);
+        }
+
+        //[HttpGet("{id}", Name = "GetAccountById")]
+        //public ActionResult<AccountWithTransactionDto> GetAccountById(int id)
         //{
-        //    return await repository.GetAllAccountsWithoutTransactionsAsync();
+        //    var account = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == id);
+        //    if (account == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return Ok(account);
         //}
 
         [HttpGet("{id}", Name = "GetAccountById")]
-        public ActionResult<AccountWithTransactionDto> GetAccountById(int id)
+        public async Task<ActionResult<AccountWithTransactionDto>> GetAccountById(int id)
         {
-            var account = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == id);
+            var account = await repository.GetAccountByIdWithTransactionsAsync(id);
             if (account == null)
             {
                 return NotFound();
             }
             return Ok(account);
         }
+
 
         [HttpPost]
         public IActionResult CreateAccount([FromBody] AccountsForCreateDto acc)

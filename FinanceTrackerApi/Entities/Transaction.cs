@@ -11,7 +11,7 @@ namespace FinanceTrackerApi.Entities
         public int Id { get; set; }
         [ForeignKey("Account")]
         public int AccountId { get; set; }
-        public Account Account { get; set; }
+        public Accounts Account { get; set; }
         [NotNull]
         public decimal Amount { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;

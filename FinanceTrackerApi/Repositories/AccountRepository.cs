@@ -5,20 +5,20 @@ namespace FinanceTrackerApi.Repositories
 {
     public class AccountRepository(AccountDbContext context) : IAccountRepository
     {
-        public async Task<Account> GetAccountByIdWithTransactionsAsync(int id)
+        public async Task<Accounts?> GetAccountByIdWithTransactionsAsync(int id)
         {
             var account = await context.Accounts.Include(acc => acc.Transactions).FirstOrDefaultAsync(acc => acc.Id == id);
-            if(account == null)
-            {
-                throw new KeyNotFoundException($"Account with ID {id} not found.");
-            }
+            //if(account == null)
+            //{
+            //    throw new KeyNotFoundException($"Account with ID {id} not found.");
+            //}
             return account;
         }
-        public async Task<IEnumerable<Account>> GetAllAccountsWithoutTransactionsAsync()
+        public async Task<IEnumerable<Accounts>> GetAllAccountsWithoutTransactionsAsync()
         {
-            return await context.Accounts.ToListAsync<Account>();
+            return await context.Accounts.ToListAsync<Accounts>();
         }
-        public async Task<IEnumerable<Account>> GetAllAccountsWithTransactionsAsync()
+        public async Task<IEnumerable<Accounts>> GetAllAccountsWithTransactionsAsync()
         {
             return await context.Accounts.Include(acc => acc.Transactions).ToListAsync();
         }
@@ -27,9 +27,16 @@ namespace FinanceTrackerApi.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAccountAsync()
+        public async Task DeleteAccountAsync(int accountId)
         {
-            throw new NotImplementedException();
+            //context.Accounts.Remove(new Account { Id = accountId });
+            var account = await context.Accounts.FirstOrDefaultAsync(acc => acc.Id == accountId);
+            if(account == null)
+            {
+                throw new KeyNotFoundException($"Account with ID {accountId} not found.");
+            }
+            context.Accounts.Remove(account);
+            await context.SaveChangesAsync();
         }
     }
 }

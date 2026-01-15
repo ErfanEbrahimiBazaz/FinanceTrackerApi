@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FinanceTrackerApi.Entities
 {
-    public class Account
+    public class Accounts
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

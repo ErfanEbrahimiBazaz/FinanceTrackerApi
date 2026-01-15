@@ -1,4 +1,5 @@
 using FinanceTrackerApi.Entities;
+using FinanceTrackerApi.Mappers;
 using FinanceTrackerApi.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,9 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 //builder.Services.AddSingleton<FinanceTrackerApi.InMemoryDB>(); // public ctor
+//builder.Services.AddAutoMapper(typeof(Program));
+//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(AccountProfileMapper));
 
 var app = builder.Build();
 
@@ -54,4 +58,5 @@ app.MapGet("/debug/endpoints", (IEnumerable<EndpointDataSource> endpoints) =>
     return Results.Ok(data);
 });
 
+//app.UseExceptionHandler("/error");
 app.Run();

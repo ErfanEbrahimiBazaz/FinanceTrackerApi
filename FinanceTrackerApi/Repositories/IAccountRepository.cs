@@ -4,10 +4,10 @@ namespace FinanceTrackerApi.Repositories
 {
     public interface IAccountRepository
     {
-        Task<Account> GetAccountByIdWithTransactionsAsync(int id);
-        Task<IEnumerable<Account>> GetAllAccountsWithTransactionsAsync();
-        Task<IEnumerable<Account>> GetAllAccountsWithoutTransactionsAsync();
+        Task<Accounts?> GetAccountByIdWithTransactionsAsync(int id);
+        Task<IEnumerable<Accounts>> GetAllAccountsWithTransactionsAsync();
+        Task<IEnumerable<Accounts>> GetAllAccountsWithoutTransactionsAsync();
         Task CreateAccountAsync();
-        Task DeleteAccountAsync();
+        Task DeleteAccountAsync(int accountId);
     }
 }

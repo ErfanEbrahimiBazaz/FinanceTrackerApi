@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FinanceTrackerApi.Dto;
+using FinanceTrackerApi.Entities;
 
 namespace FinanceTrackerApi.Mappers
 {
@@ -6,8 +8,9 @@ namespace FinanceTrackerApi.Mappers
     {
         public AccountProfileMapper()
         {
-            CreateMap<Dto.AccountsForCreateDto, Dto.AccountWithTransactionDto>().ReverseMap();
-            CreateMap<Dto.AccountForPatchDto, Dto.AccountWithTransactionDto>();
+            
+            CreateMap<Accounts, AccountWithTransactionDto>().ReverseMap();
+            CreateMap<Accounts, AccountDto>().ReverseMap();
         }
     }
 }
