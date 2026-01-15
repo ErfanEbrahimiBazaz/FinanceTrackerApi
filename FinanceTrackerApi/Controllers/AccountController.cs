@@ -1,0 +1,123 @@
+﻿using FinanceTrackerApi.Dto;
+using FinanceTrackerApi.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
+
+namespace FinanceTrackerApi.Controllers
+{
+    [ApiController]
+    [Route("/api/Account")]
+    public class AccountController(IAccountRepository repository) : ControllerBase
+    {
+        //[HttpGet("AllAccounts")]
+        //public ActionResult<List<AccountWithTransactionDto>> GetAllAccountsWithTransactions()
+        //{
+        //    var accounts = InMemoryDB.Instance.Accounts;
+        //    return Ok(accounts);
+        //}
+
+
+        [HttpGet("AllAccounts")]
+        public ActionResult<List<AccountWithTransactionDto>> GetAllAccountsWithTransactions()
+        {
+            throw new NotImplementedException();
+        }
+
+        //[HttpGet("AllAccountsWitoutTransactions")]
+        //public ActionResult<List<AccountDto>> GetAllAccountsWithoutTransactions()
+        //{
+        //    var accounts = InMemoryDB.Instance.Accounts;
+        //    var accountDtos = new List<AccountDto>();
+        //    foreach (var account in accounts)
+        //    {
+        //        var accountWithoutTransactions = new AccountDto
+        //        {
+        //            Id = account.Id,
+        //            AccountNumber = account.AccountNumber,
+        //            Balance = account.Balance,
+        //            CreatedAt = account.CreatedAt
+        //        };
+        //        accountDtos.Add(accountWithoutTransactions);
+        //    }
+        //    return Ok(accountDtos);
+        //}
+
+        //[HttpGet("AllAccountsWitoutTransactions")]
+        //public async Task<ActionResult<List<AccountDto>>> GetAllAccountsWithoutTransactions()
+        //{
+        //    return await repository.GetAllAccountsWithoutTransactionsAsync();
+        //}
+
+        [HttpGet("{id}", Name = "GetAccountById")]
+        public ActionResult<AccountWithTransactionDto> GetAccountById(int id)
+        {
+            var account = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return Ok(account);
+        }
+
+        [HttpPost]
+        public IActionResult CreateAccount([FromBody] AccountsForCreateDto acc)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            int maxId = InMemoryDB.Instance.Accounts.Any() ? InMemoryDB.Instance.Accounts.Max(a => a.Id) : 0;
+            var account = new AccountWithTransactionDto
+            {
+                Id = maxId + 1,
+                AccountNumber = acc.AccountNumber,
+                //CreatedAt = acc.CreatedAt,
+                Balance = acc.Balance,
+                CreatedAt = DateTime.UtcNow,
+                Transactions = new List<TransactionDto>()
+            };
+            InMemoryDB.Instance.Accounts.Add(account);
+            return CreatedAtRoute(nameof(GetAccountById), new { id = account.Id }, account);
+        }
+
+        [HttpPatch("{accountId}")]
+        public IActionResult EditAccountNumber(int accountId, JsonPatchDocument<AccountForPatchDto> patchAccount)
+        {
+            var accountFromStore = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == accountId);
+            if (accountFromStore == null)
+            {
+                return NotFound();
+            }
+
+            var accountToPatch = new AccountForPatchDto()
+            {
+                Id = accountId,
+                AccountNumber = accountFromStore.AccountNumber
+            };
+
+            patchAccount.ApplyTo(accountToPatch, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (InMemoryDB.Instance.Accounts.Any(acc => acc.AccountNumber == accountToPatch.AccountNumber && acc.Id != accountId))
+            {
+                return Conflict("Account number already exists.");
+            }
+
+            accountFromStore.AccountNumber = accountToPatch.AccountNumber;
+
+            if (!TryValidateModel(accountToPatch))
+            {
+                return BadRequest(ModelState);
+            }
+
+            return NoContent();
+
+        }
+
+
+    }
+}
