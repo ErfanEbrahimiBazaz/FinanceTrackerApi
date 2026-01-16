@@ -8,9 +8,12 @@ namespace FinanceTrackerApi.Mappers
     {
         public AccountProfileMapper()
         {
-            
-            CreateMap<Accounts, AccountWithTransactionDto>().ReverseMap();
-            CreateMap<Accounts, AccountDto>().ReverseMap();
+            CreateMap<AccountsForCreateDto, Accounts>();
+            CreateMap<Accounts, AccountWithTransactionDto>();
+
+            // Entity -> Dto OK
+            // Dto -> Entity NOT OK
+            CreateMap<Accounts, AccountDto>(); // “Stripe rule: Never allow mapping INTO aggregates”, Entity -> Dto 
         }
     }
 }

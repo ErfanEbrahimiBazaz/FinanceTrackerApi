@@ -6,6 +6,9 @@ namespace FinanceTrackerApi.Entities
 {
     public class Transaction
     {
+        // No setters exposed
+        // No invalid state allowed
+
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
