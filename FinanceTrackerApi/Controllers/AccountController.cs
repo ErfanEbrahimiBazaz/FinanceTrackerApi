@@ -3,7 +3,8 @@ using FinanceTrackerApi.Dto;
 using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc; // ModelState is here
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations; // ModelState is here
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -133,6 +134,15 @@ namespace FinanceTrackerApi.Controllers
             {
                 return BadRequest();
             }
+
+            // where http context is not available (out of controllers), in jobs, background services, message consumers, console apps,
+            // use validatior:
+            Validator.ValidateObject(
+                acc,
+                new ValidationContext(acc),
+                validateAllProperties: true
+            );
+
             var accountEntity = mapper.Map<Accounts>(acc);
             await repository.CreateAccountAsync(accountEntity);
             return CreatedAtRoute(nameof(GetAccountById), new { id = accountEntity.Id }, mapper.Map<AccountWithTransactionDto>(accountEntity));
