@@ -28,6 +28,13 @@ namespace FinanceTrackerApi.Controllers
             return Ok(accountsDto);
         }
 
+        [HttpGet("AllAccountsWithProjectTo")]
+        public async Task<ActionResult<List<AccountWithTransactionDto>>> GetAllAccountsWithTransactionsProjectTo()
+        {
+            var accounts = await repository.GetAllAccountsWithTransactionsProjectToAsync();
+            return Ok(accounts);
+        }
+
         //[HttpGet("AllAccountsWitoutTransactions")]
         //public ActionResult<List<AccountDto>> GetAllAccountsWithoutTransactions()
         //{
@@ -55,6 +62,15 @@ namespace FinanceTrackerApi.Controllers
             return Ok(accountDtos);
         }
 
+
+        [HttpGet("AllAccountsWitoutTransactionsWithProjectTo")]
+        public async Task<ActionResult<List<AccountDto>>> GetAllAccountsWithoutTransactionsProjectTo()
+        {
+            var accounts = await repository.GetAllAccountsWithoutTransactionsProjectToAsync();
+            var accountDtos = mapper.Map<IEnumerable<AccountDto>>(accounts);
+            return Ok(accountDtos);
+        }
+
         //[HttpGet("{id}", Name = "GetAccountById")]
         //public ActionResult<AccountWithTransactionDto> GetAccountById(int id)
         //{
@@ -74,9 +90,20 @@ namespace FinanceTrackerApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(account);
+            var accountDto = mapper.Map<AccountWithTransactionDto>(account);
+            return Ok(accountDto);
         }
 
+        [HttpGet("badnaming/{id}", Name = "GetAccountByIdProjectTo")]
+        public async Task<ActionResult<AccountWithTransactionDto>> GetAccountByIdProjectTo(int id)
+        {
+            var account = await repository.GetAccountByIdWithTransactionsProjectToAsync(id);
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return Ok(account);
+        }
 
         //[HttpPost]
         //public IActionResult CreateAccount([FromBody] AccountsForCreateDto acc)
@@ -111,7 +138,7 @@ namespace FinanceTrackerApi.Controllers
             return CreatedAtRoute(nameof(GetAccountById), new { id = accountEntity.Id }, mapper.Map<AccountWithTransactionDto>(accountEntity));
         }
 
-            [HttpPatch("{accountId}")]
+        [HttpPatch("{accountId}")]
         public IActionResult EditAccountNumber(int accountId, JsonPatchDocument<AccountForPatchDto> patchAccount)
         {
             var accountFromStore = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == accountId);
