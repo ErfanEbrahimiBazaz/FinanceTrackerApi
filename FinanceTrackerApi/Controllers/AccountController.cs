@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using FinanceTrackerApi.Dto;
+using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; // ModelState is here
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -77,28 +78,40 @@ namespace FinanceTrackerApi.Controllers
         }
 
 
+        //[HttpPost]
+        //public IActionResult CreateAccount([FromBody] AccountsForCreateDto acc)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    int maxId = InMemoryDB.Instance.Accounts.Any() ? InMemoryDB.Instance.Accounts.Max(a => a.Id) : 0;
+        //    var account = new AccountWithTransactionDto
+        //    {
+        //        Id = maxId + 1,
+        //        AccountNumber = acc.AccountNumber,
+        //        //CreatedAt = acc.CreatedAt,
+        //        Balance = acc.Balance,
+        //        CreatedAt = DateTime.UtcNow,
+        //        Transactions = new List<TransactionDto>()
+        //    };
+        //    InMemoryDB.Instance.Accounts.Add(account);
+        //    return CreatedAtRoute(nameof(GetAccountById), new { id = account.Id }, account);
+        //}
+
         [HttpPost]
-        public IActionResult CreateAccount([FromBody] AccountsForCreateDto acc)
+        public async Task<IActionResult> CreateAccount([FromBody] AccountsForCreateDto acc)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            int maxId = InMemoryDB.Instance.Accounts.Any() ? InMemoryDB.Instance.Accounts.Max(a => a.Id) : 0;
-            var account = new AccountWithTransactionDto
-            {
-                Id = maxId + 1,
-                AccountNumber = acc.AccountNumber,
-                //CreatedAt = acc.CreatedAt,
-                Balance = acc.Balance,
-                CreatedAt = DateTime.UtcNow,
-                Transactions = new List<TransactionDto>()
-            };
-            InMemoryDB.Instance.Accounts.Add(account);
-            return CreatedAtRoute(nameof(GetAccountById), new { id = account.Id }, account);
+            var accountEntity = mapper.Map<Accounts>(acc);
+            await repository.CreateAccountAsync(accountEntity);
+            return CreatedAtRoute(nameof(GetAccountById), new { id = accountEntity.Id }, mapper.Map<AccountWithTransactionDto>(accountEntity));
         }
 
-        [HttpPatch("{accountId}")]
+            [HttpPatch("{accountId}")]
         public IActionResult EditAccountNumber(int accountId, JsonPatchDocument<AccountForPatchDto> patchAccount)
         {
             var accountFromStore = InMemoryDB.Instance.Accounts.FirstOrDefault(acc => acc.Id == accountId);

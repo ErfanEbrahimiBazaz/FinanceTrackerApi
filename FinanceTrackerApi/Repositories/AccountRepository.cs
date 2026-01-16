@@ -1,4 +1,5 @@
 ﻿using FinanceTrackerApi.Entities;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTrackerApi.Repositories
@@ -22,9 +23,16 @@ namespace FinanceTrackerApi.Repositories
         {
             return await context.Accounts.Include(acc => acc.Transactions).ToListAsync();
         }
-        public async Task CreateAccountAsync()
+        public async Task CreateAccountAsync(Accounts account)
         {
-            throw new NotImplementedException();
+            if(account == null)
+            {
+                throw new ArgumentNullException(nameof(account), "Account cannot be null.");
+            }
+
+            
+            context.Accounts.Add(account);
+            await context.SaveChangesAsync();
         }
 
         public async Task DeleteAccountAsync(int accountId)
