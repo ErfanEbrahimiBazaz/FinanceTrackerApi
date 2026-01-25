@@ -1,7 +1,10 @@
 using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Mappers;
 using FinanceTrackerApi.Repositories;
+using FinanceTrackerApi.Services.LoginOperations;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +31,14 @@ builder.Services.AddOpenApi();
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(AccountProfileMapper));
 
+builder.Services.AddSingleton<IEncryptionUtility, EncryptionUtility>();
+//builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+//builder.Services.AddMediatR(typeof(Program)); //MediatR Dependency Injection package, not needed anymore after MediatR v12+
+
+builder.Services.AddSwaggerGen();
+
+// middlewares
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

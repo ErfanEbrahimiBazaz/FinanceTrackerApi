@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FinanceTrackerApi.Entities.Login;
+using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTrackerApi.Entities
 {
@@ -6,6 +7,7 @@ namespace FinanceTrackerApi.Entities
     {
         public DbSet<Accounts> Accounts { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Users> Users { get; set; }
         public AccountDbContext(DbContextOptions<AccountDbContext> options)
             : base(options)
         {

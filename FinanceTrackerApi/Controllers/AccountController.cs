@@ -175,12 +175,12 @@ namespace FinanceTrackerApi.Controllers
                 return Conflict("Account number already exists.");
             }
 
-            accountFromStore.AccountNumber = accountToPatch.AccountNumber;
-
             if (!TryValidateModel(accountToPatch))
             {
                 return BadRequest(ModelState);
             }
+
+            accountFromStore.AccountNumber = accountToPatch.AccountNumber;
 
             return NoContent();
 
