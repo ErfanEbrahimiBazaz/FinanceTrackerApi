@@ -2,6 +2,8 @@ using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Mappers;
 using FinanceTrackerApi.Repositories;
 using FinanceTrackerApi.Services.LoginOperations;
+using FinanceTrackerApi.Services.TokenService;
+using FinanceTrackerApi.SettingClasses;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -32,6 +34,10 @@ builder.Services.AddOpenApi();
 builder.Services.AddAutoMapper(typeof(AccountProfileMapper));
 
 builder.Services.AddSingleton<IEncryptionUtility, EncryptionUtility>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.Configure<JwtSettings>(
+    builder.Configuration.GetSection("JWTSettings"));
+
 //builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 //builder.Services.AddMediatR(typeof(Program)); //MediatR Dependency Injection package, not needed anymore after MediatR v12+

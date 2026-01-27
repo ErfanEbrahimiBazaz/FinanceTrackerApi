@@ -30,7 +30,7 @@ public class SignupCommandRequestHandler(IEncryptionUtility encryptionUtility, A
     public async Task<SignupCommandResponse> Handle(SignupCommandRequest request, CancellationToken cancellationToken)
     {
         // Implement signup logic here (e.g., save to database)
-        var user = new Users
+        var user = new User
         {
             FullName = request.FullName,    
             UserName = request.Username,

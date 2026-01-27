@@ -1,5 +1,6 @@
 ﻿using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Services.LoginOperations;
+using FinanceTrackerApi.Services.TokenService;
 using MediatR;
 
 namespace FinanceTrackerApi.CommandQueries.Logins.Commands;
@@ -16,7 +17,8 @@ public class LoginCommandResponse
 }
 
 public class LoginCommandHandler(IEncryptionUtility encryptionUtility,
-    AccountDbContext dbContext): IRequestHandler<LoginCommandRequest, LoginCommandResponse>
+    AccountDbContext dbContext,
+    IJwtService jwtService) : IRequestHandler<LoginCommandRequest, LoginCommandResponse>
 {
     public async Task<LoginCommandResponse> Handle(LoginCommandRequest request, CancellationToken cancellationToken)
     {
@@ -35,7 +37,7 @@ public class LoginCommandHandler(IEncryptionUtility encryptionUtility,
         // For demonstration, we will just return a dummy token
         return await Task.FromResult(new LoginCommandResponse
         {
-            Token = "dummy-token"
+            Token = jwtService.GenerateAccessToken(user)
         });
     }
 }

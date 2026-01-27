@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace FinanceTrackerApi.Entities.Login;
 
-public class Users
+public class User
 {
     public string? FullName { get; set; }
     [Key]
