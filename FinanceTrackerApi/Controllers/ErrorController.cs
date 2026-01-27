@@ -3,9 +3,11 @@
 namespace FinanceTrackerApi.Controllers;
 
 [ApiController]
+[Route("error")]
 public class ErrorController : ControllerBase
 {
-    [Route("/error")]
+    [ApiExplorerSettings(IgnoreApi = true)]
+    [HttpGet("/error")]
     public IActionResult Error()
     {
         return Problem(
