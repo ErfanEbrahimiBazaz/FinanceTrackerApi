@@ -5,10 +5,7 @@ using FinanceTrackerApi.Repositories;
 using FinanceTrackerApi.Services.LoginOperations;
 using FinanceTrackerApi.Services.TokenService;
 using FinanceTrackerApi.SettingClasses;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);

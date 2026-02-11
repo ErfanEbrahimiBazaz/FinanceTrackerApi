@@ -2,6 +2,7 @@
 using FinanceTrackerApi.Dto;
 using FinanceTrackerApi.Entities;
 using FinanceTrackerApi.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations; // ModelState is here
@@ -9,6 +10,7 @@ using System.ComponentModel.DataAnnotations; // ModelState is here
 namespace FinanceTrackerApi.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/Account")]
     public class AccountController(IAccountRepository repository,
         IMapper mapper) : ControllerBase
